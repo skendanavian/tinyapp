@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/skendanavian/tinyapp/issues"
   },
-  "homepage": "https://github.com/skendanavian/tinyapp#readme"
+  "homepage": "https://github.com/skendanavian/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
