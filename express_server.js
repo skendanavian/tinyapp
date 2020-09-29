@@ -49,10 +49,10 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.post("/urls/:shortURL/update", (req, res) => {
-
-
-
+app.post("/urls/:id/update", (req, res) => {
+  let shortURL = req.params.id;
+  urlDatabase[shortURL] = req.body.updatedURL;
+  res.redirect(`/urls/${shortURL}`);
 
 })
 
