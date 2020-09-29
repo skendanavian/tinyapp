@@ -24,5 +24,16 @@
           URL</a>
       </div>
     </div>
+    <form method="Post"
+      action="/urls/<%= shortURL %>/update">
+      <div style="display: inline-flex">
+        <input type="username"
+          name="username"
+          placeholder="Username">
+        <button style="margin: 0px 10px"
+          type="submit"
+          class="btn btn-outline-light">Submit</button>
+      </div>
+    </form>
   </nav>
 </header>
