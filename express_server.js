@@ -44,9 +44,14 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL]
-  res.redirect(longURL);
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.status(404);
+    res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
+  }
 });
 
 app.post("/urls/:id/update", (req, res) => {
