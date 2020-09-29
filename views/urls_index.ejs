@@ -26,6 +26,7 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+
         </tr>
       </thead>
       <tbody>
@@ -33,7 +34,19 @@
         <tr>
           <td><%= url %></td>
           <td><%= urls[url] %></td>
+          <td>
+
+            <form method="POST"
+              action="/urls/<%= url %>/delete">
+              <!-- btn from bootstrap -->
+              <button type="button"
+                class="btn btn-danger">Delete</button>
+
+            </form>
+
+          </td>
         </tr>
+
         <% } %>
       </tbody>
     </table>
