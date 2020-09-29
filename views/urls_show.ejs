@@ -24,6 +24,23 @@
       </p>
     </div>
     <div class="card-footer text-muted">
+      <form method="Post"
+        action="/urls/<%= shortURL %>/update">
+        <div
+          style="display: inline-flex">
+          <p style="margin: 10px">
+            <strong>
+              Edit URL:</strong></p>
+          <input type="text"
+            placeholder="http://">
+          <button
+            style="margin: 0px 10px"
+            type="submit"
+            class="btn btn-primary">Edit</button>
+        </div>
+      </form>
+
+
     </div>
   </div>
   <!-- Bootstrap JS -->
