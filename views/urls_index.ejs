@@ -15,10 +15,10 @@
 </head>
 
 <body>
-
   <header>
     <%- include('./partials/_header'); %>
   </header>
+
   <main style="margin: 1em;">
     <h3>My URLs</h3>
     <table class="table">
@@ -45,7 +45,6 @@
 
           </td>
           <td>
-
             <form method="POST"
               action="/urls/<%= url %>/delete">
               <button type="submit"

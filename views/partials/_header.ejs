@@ -24,12 +24,28 @@
           URL</a>
       </div>
     </div>
+    <%if (username){ %>
     <p
       style="color: #3f3f3f; margin: 10px; font-size: 1.2rem;">
       Logged
       In
-      As: <%= username %>
+      As: <%= username%>!
     </p>
+    <form method="Post"
+      action="/logout">
+      <div
+        style="display: inline-flex;">
+        <input type="username"
+          name="username"
+          placeholder="Username">
+        <button style="margin: 0px 10px"
+          type="submit"
+          class="btn btn-outline-light">Logout</button>
+      </div>
+    </form>
+    <% } else { %>
+
+
     <form method="Post" action="/login">
       <div style="display: inline-flex">
         <input type="username"
@@ -40,5 +56,8 @@
           class="btn btn-outline-light">Login</button>
       </div>
     </form>
+
+    <% } %>
+
   </nav>
 </header>
