@@ -19,6 +19,15 @@ function generateRandomString() {
   return randomString;
 }
 
+//Handle Cookies with Cookie-Parser
+app.get('/', function(req, res) {
+  // Cookies that have not been signed
+  console.log('Cookies: ', req.cookies)
+
+  // Cookies that have been signed
+  console.log('Signed Cookies: ', req.signedCookies)
+})
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -59,6 +68,11 @@ app.get("/u/:shortURL", (req, res) => {
     res.status(404);
     res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
   }
+});
+
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
 });
 
 app.post("/urls/:id/update", (req, res) => {
