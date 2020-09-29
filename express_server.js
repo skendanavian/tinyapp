@@ -40,7 +40,12 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
-  res.render("urls_show", templateVars);
+  if (templateVars.longURL) {
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(404);
+    res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
