@@ -33,29 +33,38 @@
     </p>
     <form method="Post"
       action="/logout">
-      <div
-        style="display: inline-flex;">
 
-        <button style="margin: 0px 10px"
+
+      <!-- <button style="margin: 0px 10px"
           type="submit"
-          class="btn btn-outline-light">Logout</button>
+          class="btn btn-outline-light">Logout</button> -->
+      <div class="navbar-nav"
+        style="display: flex;">
+        <button type="submit"
+          class="btn btn-outline-primary"
+          style="margin: 5px;"><a
+            class="nav-item nav-link"
+            href="/login">Logout</a></button>
+      </div>
       </div>
     </form>
     <% } else { %>
 
+    <div class="navbar-nav"
+      style="display: flex;">
 
-    <form method="Post" action="/login">
-      <div style="display: inline-flex">
-        <input type="username"
-          name="username"
-          placeholder="Username">
-        <button style="margin: 0px 10px"
-          type="submit"
-          class="btn btn-outline-light">Login</button>
-      </div>
-    </form>
+      <button type="submit"
+        class="btn btn-outline-primary"
+        style="margin: 5px;"><a
+          class="nav-item nav-link"
+          href="/login">Login</a></button>
+      <button type="submit"
+        class="btn btn-outline-primary"
+        style="margin: 5px;"><a
+          class="nav-item nav-link"
+          href="/register">Register</a></button>
 
-    <% } %>
-
+    </div>
+    <%}%>
   </nav>
 </header>
