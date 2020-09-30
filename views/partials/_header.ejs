@@ -24,12 +24,12 @@
           URL</a>
       </div>
     </div>
-    <%if (username){ %>
+    <%if (user.email){ %>
     <p
       style="color: #3f3f3f; margin: 10px; font-size: 1.2rem;">
       Logged
       In
-      As: <%= username%>!
+      As: <%=user.email%>!
     </p>
     <form method="Post"
       action="/logout">
