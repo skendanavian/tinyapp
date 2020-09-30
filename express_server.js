@@ -88,7 +88,9 @@ app.post("/register", (req, res) => {
     email: templateVars.email,
     password: templateVars.password
   }
+  res.cookie('user_id', userId);
   console.log(users);
+  res.redirect('/urls');
 });
 
 app.post("/logout", (req, res) => {
