@@ -5,6 +5,7 @@ const {response} = require('express');
 const PORT = 8080;
 const cookieParser = require('cookie-parser')
 
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
 app.use(cookieParser());
