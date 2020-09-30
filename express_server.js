@@ -18,19 +18,29 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "easy"
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "easy"
   }
 };
 
-function generateRandomString() {
+const generateRandomString = () => {
   const randomString = Math.random().toString(36).substring(2, 8);
   return randomString;
 }
+
+const validEmail = (userEmail) => {
+  // (Object.keys(users)).forEach((e) => users[e].email !== userEmail ? true : false);
+  for (let userId in users) {
+    if (users[userId].email === userEmail) {
+      return false;
+    }
+  }
+  return true;
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -46,7 +56,8 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id']
-  const templateVars = {user: users[userId], urls: urlDatabase};
+  const user = users[userId] ? users[userId] : null;
+  const templateVars = {user, urls: urlDatabase};
 
   // console.log(templateVars.user.email);
   res.render("urls_index", templateVars);
@@ -87,13 +98,20 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
   templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
-  users[userId] = {
-    id: userId,
-    email: templateVars.email,
-    password: templateVars.password
+  const emailCheck = validEmail(templateVars.email);
+  if (templateVars.email === "" || templateVars.password === "" || !emailCheck) {
+    res.status(400);
+    res.send('<h1>Registration Failed: Please try again.\n</h1><p>400 Error\n</p>');
+  } else {
+    users[userId] = {
+      id: userId,
+      email: templateVars.email,
+      password: templateVars.password
+    }
+    console.log(users)
+    res.cookie('user_id', userId);
+    res.redirect('/urls');
   }
-  res.cookie('user_id', userId);
-  res.redirect('/urls');
 });
 
 app.post("/logout", (req, res) => {
