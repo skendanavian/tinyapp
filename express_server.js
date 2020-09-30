@@ -14,6 +14,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 function generateRandomString() {
   const randomString = Math.random().toString(36).substring(2, 8);
   return randomString;
@@ -65,6 +78,17 @@ app.get("/u/:shortURL", (req, res) => {
     res.status(404);
     res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
   }
+});
+
+app.post("/register", () => {
+  const userId = generateRandomString();
+  templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
+  user[userId] = {
+    id: userId,
+    email: templateVars.email,
+    password: templateVars.password
+  }
+  console.log(user);
 });
 
 app.post("/logout", (req, res) => {
