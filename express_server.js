@@ -66,9 +66,14 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const userId = req.cookies['user_id']
+  const userId = req.cookies['user_id'];
   const templateVars = {user: users[userId]}
-  res.render("urls_new", templateVars);
+  console.log(userId)
+  if (templateVars.user) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/register", (req, res) => {
