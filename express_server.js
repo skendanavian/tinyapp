@@ -72,10 +72,16 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render('register',);
+  const userId = req.cookies['user_id']
+  const user = users[userId] ? users[userId] : null;
+  const templateVars = {user, urls: urlDatabase};
+  res.render('register', templateVars);
 });
 app.get("/login", (req, res) => {
-  res.render('login');
+  const userId = req.cookies['user_id']
+  const user = users[userId] ? users[userId] : null;
+  const templateVars = {user, urls: urlDatabase};
+  res.render('login', templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
