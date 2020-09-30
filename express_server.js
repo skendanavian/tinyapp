@@ -80,15 +80,15 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-app.post("/register", () => {
+app.post("/register", (req, res) => {
   const userId = generateRandomString();
   templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
-  user[userId] = {
+  users[userId] = {
     id: userId,
     email: templateVars.email,
     password: templateVars.password
   }
-  console.log(user);
+  console.log(users);
 });
 
 app.post("/logout", (req, res) => {
