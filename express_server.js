@@ -36,7 +36,8 @@ const generateRandomString = () => {
 const validEmail = (userEmail) => {
   // (Object.keys(users)).forEach((e) => users[e].email !== userEmail ? true : false);
   for (let userId in users) {
-    if (users[userId].email === userEmail) {
+    const currentUser = users[userId]
+    if (currentUser.email === userEmail) {
       return false;
     }
   }
@@ -71,7 +72,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render('register');
+  res.render('register',);
 });
 app.get("/login", (req, res) => {
   res.render('login');
@@ -118,15 +119,39 @@ app.post("/register", (req, res) => {
   }
 });
 
-app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
-  res.redirect('/urls');
-});
+const validateUser = (users, email, password) => {
+  for (let user in users) {
+    const currentUser = users[user];
+    if (currentUser.email === email && currentUser.password === password) {
+      return currentUser;
+    }
+  }
+  return null;
+}
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  // templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
+  const {email, password} = req.body
+  const emailCheck = validEmail(email);
+  if (email === "" || password === "" || emailCheck) {
+    res.status(403);
+    return res.send('<h1>Login Failed: Please try again.\n</h1><p>400 Error\n</p>');
+  } else {
+    const userId = validateUser(users, email, password)
+    if (userId) {
+      res.cookie('user_id', userId.id);
+      return res.redirect('/urls');
+    }
+    res.status(403);
+    return res.send('<h1>Login Failed: Please try again.\n</h1><p>400 Error\n</p>');
+  }
 });
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('user_id');
+  res.redirect('/login');
+});
+
 
 app.post("/urls/:id/update", (req, res) => {
   let shortURL = req.params.id;
