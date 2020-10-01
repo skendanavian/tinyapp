@@ -9,9 +9,11 @@ const PORT = 8080;
 
 
 //helper functions
-const {generateRandomString, validEmail, validateUser, urlsForUser} = require('./helpers')
+
+const {generateRandomString, validateUser, urlsForUser, LoggedInCheck, getUserByEmail} = require('./helpers')
 
 //npm package settings
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
@@ -20,24 +22,25 @@ app.use(cookieSession({
   keys: ['fjioeacoiejaf78912810938923ncasajioeawc', 'kfkoecijeaionecowefnilacnuiew87635vdsaceaw'],
 }));
 
+//User and URL Databases
+
 const urlDatabase = {
-  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "userRandomID"},
-  "ism5xK": {longURL: "http://www.google.com", userID: "user2RandomID"},
-  "ism5xK": {longURL: "http://www.google.com", userID: "userRandomID"}
+
 };
 
 const users = {
 
 };
 
+//GET ROUTES
+
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
 
   if (user) {
     const userUrls = urlsForUser(urlDatabase, userId);
     const templateVars = {user, urls: userUrls, error: null};
-    console.log(userUrls)
     res.render("urls_index", templateVars);
   } else {
 
@@ -65,23 +68,21 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
   const templateVars = {user, urls: urlDatabase, error: null};
   res.render('login', templateVars);
 });
 
 
 app.get("/urls/:shortURL", (req, res) => {
-
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
   const templateVars = {shortURL, longURL, user: users[userId], error: null};
 
   if (user) {
-    const userUrls = urlsForUser(urlDatabase, user.id)
-    console.log(userUrls)
+    const userUrls = urlsForUser(urlDatabase, user.id);
     for (let url of userUrls) {
       if (url.shortURL === shortURL && url.longURL) {
         return res.render("urls_show", templateVars);
@@ -89,13 +90,12 @@ app.get("/urls/:shortURL", (req, res) => {
     }
   }
   res.status(404);
-  res.render('urls_index', {user, urls: null, error: "No Access to this URL: 404 Error"})
-
+  res.render('urls_index', {user, urls: null, error: "No Access to this URL: 404 Error"});
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
 
@@ -103,48 +103,48 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
   } else {
     res.status(404);
-    res.render('urls_index', {user, urls: null, error: "Invalid URL: 404 Error"})
+    res.render('urls_index', {user, urls: null, error: "Invalid URL: 404 Error"});
   }
 });
 
+//POST ROUTES
+
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
-  templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
-  const emailCheck = validEmail(users, templateVars.email);
+  const {email, password} = req.body;
+  const user = getUserByEmail(email, users);
 
-  if (templateVars.email === "" || templateVars.password === "" || !emailCheck) {
+  if (email === "" || password === "" || user) {
     res.status(400);
-    res.render('register', {user: null, error: "Failed Registration Attempt"})
+    res.render('register', {user: null, error: "Failed Registration Attempt"});
 
   } else {
     users[userId] = {
       id: userId,
-      email: templateVars.email,
-      password: bcrypt.hashSync(templateVars.password, salt)
+      email: email,
+      password: bcrypt.hashSync(password, salt)
     }
-    console.log(users)
-
     req.session['user_id'] = userId;
     res.redirect('/urls');
   }
 });
 
-
-
 app.post("/login", (req, res) => {
   const {email, password} = req.body
-  const emailCheck = validEmail(users, email);
-  if (email === "" || password === "" || emailCheck) {
+  if (email === "" || password === "") {
     res.status(403);
     res.render('login', {user: null, error: "Failed Login Attempt"})
   } else {
-    const userId = validateUser(bcrypt, users, email, password)
-    if (userId) {
-      req.session.user_id = userId.id;
+    const user = getUserByEmail(email, users)
+    const validUser = validateUser(bcrypt, user, email, password)
+
+    if (validUser) {
+      req.session.user_id = user.id;
       return res.redirect('/urls');
-    } else
+    } else {
       res.status(403);
-    res.render('login', {user: null, error: "Failed Login Attempt"})
+      res.render('login', {user: null, error: "Failed Login Attempt"});
+    }
   }
 });
 
@@ -153,10 +153,9 @@ app.post("/logout", (req, res) => {
   res.redirect('/login');
 });
 
-
 app.post("/urls/:id/update", (req, res) => {
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
   let link = req.params.id;
   if (user) {
     const userUrls = urlsForUser(urlDatabase, userId)
@@ -170,14 +169,11 @@ app.post("/urls/:id/update", (req, res) => {
     }
   }
   return res.status(400);
-  // res.render('urls_index', {
-  //   user, urls: null, error: "Unauthorized Request"
-  // })
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = req.session.user_id;
-  const user = users[userId] ? users[userId] : null;
+  const user = LoggedInCheck(users, userId);
   const shortURL = req.params.shortURL;
   if (user) {
     const userUrls = urlsForUser(urlDatabase, userId)
@@ -189,9 +185,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     }
   }
   return res.status(400);
-  // res.render('urls_index', {
-  //   user, urls: null, error: "Unauthorized Request"
-  // })
 });
 
 app.post("/urls", (req, res) => {
@@ -199,12 +192,10 @@ app.post("/urls", (req, res) => {
   const userID = req.session.user_id;
   const longURL = req.body.longURL;
   templateVars = {shortURL, longURL, user: userID}
-  console.log(userID)
   urlDatabase[shortURL] = {
     longURL: templateVars.longURL,
     userID: userID
   }
-  console.log(templateVars.longURL);
   res.redirect(`/urls/${shortURL}`);
 });
 

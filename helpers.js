@@ -1,15 +1,7 @@
-
-
-
-
-
-
-
 const generateRandomString = () => {
   const randomString = Math.random().toString(36).substring(2, 8);
   return randomString;
 };
-
 
 const urlsForUser = (urlDatabase, id) => {
   const userUrls = [];
@@ -26,25 +18,34 @@ const urlsForUser = (urlDatabase, id) => {
   return (userUrls);
 };
 
-const validEmail = (users, userEmail) => {
-  for (let userId in users) {
-    const currentUser = users[userId]
-    if (currentUser.email === userEmail) {
-      return false;
-    }
-  }
-  return true;
-};
-
-
-const validateUser = (bcrypt, users, email, password) => {
-  for (let user in users) {
-    const currentUser = users[user];
-    if (currentUser.email === email && bcrypt.compareSync(password, currentUser.password)) {
+const getUserByEmail = (email, database) => {
+  for (let user in database) {
+    const currentUser = database[user];
+    if (currentUser.email === email) {
+      console.log(currentUser)
       return currentUser;
     }
   }
   return null;
 };
 
-module.exports = {generateRandomString, validEmail, validateUser, urlsForUser};
+const validateUser = (bcrypt, user, email, password) => {
+  if (user.email === email && bcrypt.compareSync(password, user['password'])) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const LoggedInCheck = (database, userID) => {
+  if (database[userID]) {
+    return database[userID];
+  }
+  else {
+    return null;
+  }
+
+}
+
+
+module.exports = {generateRandomString, validateUser, urlsForUser, LoggedInCheck, getUserByEmail}
