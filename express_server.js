@@ -2,8 +2,14 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const {response} = require('express');
-const PORT = 8080;
 const cookieParser = require('cookie-parser')
+//password hashing
+const bcrypt = require('bcrypt');
+const salt = bcrypt.genSaltSync(10);
+const PORT = 8080;
+
+
+//helper functions
 const {generateRandomString, validEmail, validateUser, urlsForUser} = require('./helpers')
 
 app.use(express.static('public'));
@@ -123,17 +129,20 @@ app.post("/register", (req, res) => {
   const userId = generateRandomString();
   templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
   const emailCheck = validEmail(users, templateVars.email);
+
+
   if (templateVars.email === "" || templateVars.password === "" || !emailCheck) {
     res.status(400);
-    // res.send('<h1>Registration Failed: Please try again.\n</h1><p>400 Error\n</p>');
     res.render('register', {user: null, error: "Failed Registration Attempt"})
+
   } else {
     users[userId] = {
       id: userId,
       email: templateVars.email,
-      password: templateVars.password
+      password: bcrypt.hashSync(templateVars.password, salt)
     }
     console.log(users)
+
     res.cookie('user_id', userId);
     res.redirect('/urls');
   }
@@ -149,7 +158,7 @@ app.post("/login", (req, res) => {
     res.status(403);
     res.render('login', {user: null, error: "Failed Login Attempt"})
   } else {
-    const userId = validateUser(users, email, password)
+    const userId = validateUser(bcrypt, users, email, password)
     if (userId) {
       res.cookie('user_id', userId.id);
       return res.redirect('/urls');

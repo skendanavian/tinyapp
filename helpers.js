@@ -36,10 +36,11 @@ const validEmail = (users, userEmail) => {
   return true;
 };
 
-const validateUser = (users, email, password) => {
+
+const validateUser = (bcrypt, users, email, password) => {
   for (let user in users) {
     const currentUser = users[user];
-    if (currentUser.email === email && currentUser.password === password) {
+    if (currentUser.email === email && bcrypt.compareSync(password, currentUser.password)) {
       return currentUser;
     }
   }
