@@ -13,7 +13,8 @@ app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "userRandomID"},
-  "ism5xK": {longURL: "http://www.google.com", userID: "user2RandomID"}
+  "ism5xK": {longURL: "http://www.google.com", userID: "user2RandomID"},
+  "ism5xK": {longURL: "http://www.google.com", userID: "userRandomID"}
 };
 
 const users = {
@@ -29,7 +30,7 @@ const users = {
   }
 };
 
-urlsForUser(urlDatabase, 'userRandomID')
+console.log(urlsForUser(urlDatabase, 'userRandomID'))
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -46,8 +47,11 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id']
   const user = users[userId] ? users[userId] : null;
+
   if (user) {
-    const templateVars = {user, urls: urlDatabase, error: null};
+    const userUrls = urlsForUser(urlDatabase, userId);
+    const templateVars = {user, urls: userUrls, error: null};
+    console.log(userUrls)
     res.render("urls_index", templateVars);
   } else {
 
@@ -124,6 +128,7 @@ app.post("/register", (req, res) => {
       email: templateVars.email,
       password: templateVars.password
     }
+    console.log(users)
     res.cookie('user_id', userId);
     res.redirect('/urls');
   }
@@ -133,7 +138,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   const {email, password} = req.body
-
+  const userId = res.cookie['user_id']
   const emailCheck = validEmail(users, email);
   if (email === "" || password === "" || emailCheck) {
     res.status(403);
@@ -156,28 +161,56 @@ app.post("/logout", (req, res) => {
 
 
 app.post("/urls/:id/update", (req, res) => {
-  let shortURL = req.params.id;
-  urlDatabase[shortURL].longURL = req.body.updatedURL;
-  res.redirect('/urls');
-
-})
+  const userId = req.cookies['user_id'];
+  const user = users[userId] ? users[userId] : null;
+  let link = req.params.id;
+  if (user) {
+    const userUrls = urlsForUser(urlDatabase, userId)
+    for (let e of userUrls) {
+      if (e.shortURL === link) {
+        urlDatabase[link] = {
+          longURL: req.body.updatedURL, userID: userId
+        }
+        return res.redirect('/urls');
+      }
+    }
+  }
+  return res.status(400);
+  // res.render('urls_index', {
+  //   user, urls: null, error: "Unauthorized Request"
+  // })
+});
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  let shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect('/urls');
+  const userId = req.cookies['user_id'];
+  const user = users[userId] ? users[userId] : null;
+  const shortURL = req.params.shortURL;
+  if (user) {
+    const userUrls = urlsForUser(urlDatabase, userId)
+    for (let e of userUrls) {
+      if (e.shortURL === shortURL) {
+        delete urlDatabase[shortURL];
+        return res.redirect('/urls');
+      }
+    }
+  }
+  return res.status(400);
+  // res.render('urls_index', {
+  //   user, urls: null, error: "Unauthorized Request"
+  // })
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  const userID = res.cookie['user_id']
+  const userID = req.cookies['user_id']
   const longURL = req.body.longURL;
   templateVars = {shortURL, longURL, user: userID}
-
+  console.log(userID)
   urlDatabase[shortURL] = {
-    longURL,
-    userID
+    longURL: templateVars.longURL,
+    userID: userID
   }
+  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 

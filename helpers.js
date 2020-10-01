@@ -11,20 +11,18 @@ const generateRandomString = () => {
 };
 
 const urlsForUser = (urlDatabase, id) => {
-  const userUrls = {}
+  const userUrls = [];
   const urlIds = Object.keys(urlDatabase);
   for (let key of urlIds) {
     const obj = urlDatabase[key]
     if (obj.userID === id) {
-      userUrls[key] = obj.longURL;
+      userUrls.push({
+        shortURL: key,
+        longURL: obj.longURL
+      });
     }
-    // for (let url in urlDatabase) {
-    //   const innerUrl = urlDatabase[url];
-    //   if (url.id === id) {
-    //     userUrls[url] = urlDatabase[url].longURL;
   }
-  console.log(userUrls);
-
+  return (userUrls);
 };
 
 const validEmail = (users, userEmail) => {
