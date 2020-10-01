@@ -62,7 +62,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies['user_id'];
   const templateVars = {user: users[userId]}
-  console.log(userId)
+
   if (templateVars.user) {
     res.render("urls_new", templateVars);
   } else {
@@ -91,13 +91,17 @@ app.get("/urls/:shortURL", (req, res) => {
   const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
   const templateVars = {shortURL, longURL, user: users[userId], error: null};
 
-  for (let url in urlDatabase) {
-    if (url === shortURL && urlDatabase[url].longURL) {
-      return res.render("urls_show", templateVars);
+  if (user) {
+    const userUrls = urlsForUser(urlDatabase, user.id)
+    console.log(userUrls)
+    for (let url of userUrls) {
+      if (url.shortURL === shortURL && url.longURL) {
+        return res.render("urls_show", templateVars);
+      }
     }
   }
   res.status(404);
-  res.render('urls_index', {user, urls: null, error: "Invalid URL: 404 Error"})
+  res.render('urls_index', {user, urls: null, error: "No Access to this URL: 404 Error"})
 
 });
 
@@ -106,6 +110,7 @@ app.get("/u/:shortURL", (req, res) => {
   const user = users[userId] ? users[userId] : null;
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
+
   if (longURL) {
     res.redirect(longURL);
   } else {
@@ -210,7 +215,7 @@ app.post("/urls", (req, res) => {
     longURL: templateVars.longURL,
     userID: userID
   }
-  console.log(urlDatabase);
+  console.log(templateVars.longURL);
   res.redirect(`/urls/${shortURL}`);
 });
 
