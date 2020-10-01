@@ -6,9 +6,6 @@ const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
 const PORT = 8080;
 
-
-//helper functions
-
 const {generateRandomString, validateUser, urlsForUser, LoggedInCheck, getUserByEmail} = require('./helpers')
 
 //npm package settings
