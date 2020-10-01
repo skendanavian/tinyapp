@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const {response} = require('express');
 const PORT = 8080;
 const cookieParser = require('cookie-parser')
-const {generateRandomString, validEmail, validateUser} = require('./helpers')
+const {generateRandomString, validEmail, validateUser, urlsForUser} = require('./helpers')
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,6 +28,8 @@ const users = {
     password: "easy"
   }
 };
+
+urlsForUser(urlDatabase, 'userRandomID')
 
 app.get("/", (req, res) => {
   res.send("Hello!");

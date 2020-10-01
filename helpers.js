@@ -10,8 +10,24 @@ const generateRandomString = () => {
   return randomString;
 };
 
+const urlsForUser = (urlDatabase, id) => {
+  const userUrls = {}
+  const urlIds = Object.keys(urlDatabase);
+  for (let key of urlIds) {
+    const obj = urlDatabase[key]
+    if (obj.userID === id) {
+      userUrls[key] = obj.longURL;
+    }
+    // for (let url in urlDatabase) {
+    //   const innerUrl = urlDatabase[url];
+    //   if (url.id === id) {
+    //     userUrls[url] = urlDatabase[url].longURL;
+  }
+  console.log(userUrls);
+
+};
+
 const validEmail = (users, userEmail) => {
-  // (Object.keys(users)).forEach((e) => users[e].email !== userEmail ? true : false);
   for (let userId in users) {
     const currentUser = users[userId]
     if (currentUser.email === userEmail) {
@@ -31,4 +47,4 @@ const validateUser = (users, email, password) => {
   return null;
 };
 
-module.exports = {generateRandomString, validEmail, validateUser};
+module.exports = {generateRandomString, validEmail, validateUser, urlsForUser};
