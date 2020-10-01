@@ -44,7 +44,7 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
   } else {
 
-    res.render('urls_index', {user, urls: null, error: "Please create an account or login to access your URLs !"})
+    res.render('urls_index', {user, urls: null, error: true})
   }
 });
 
@@ -150,7 +150,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   req.session.user_id = null;
-  res.redirect('/login');
+  res.redirect('/urls');
 });
 
 app.post("/urls/:id/update", (req, res) => {

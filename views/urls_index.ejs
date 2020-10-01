@@ -26,8 +26,15 @@
   <main style="margin: 1em;">
     <div class="error-text">
       <%if(error){%>
-      <h3 style="text-align: center;">
-        <%=error%></h3>
+      <div
+        style="margin-top: 6rem; padding: 4rem;">
+        <h2 style="text-align: center;">
+          Please <a href="/login">
+            login</a> or <a
+            href="/register">register</a>
+          to access and create URLs!
+        </h2>
+      </div>
       <%} else {%>
 
       <h3>My URLs</h3>

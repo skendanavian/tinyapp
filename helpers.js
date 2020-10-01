@@ -22,11 +22,10 @@ const getUserByEmail = (email, database) => {
   for (let user in database) {
     const currentUser = database[user];
     if (currentUser.email === email) {
-      console.log(currentUser)
       return currentUser;
     }
   }
-  return null;
+  return undefined;
 };
 
 const validateUser = (bcrypt, user, email, password) => {
