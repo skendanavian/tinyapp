@@ -34,6 +34,17 @@ const users = {
 
 //GET ROUTES
 
+app.get("/", (req, res) => {
+  const userId = req.session.user_id;
+  const user = LoggedInCheck(users, userId);
+  if (user) {
+    res.redirect("/urls");
+  }
+  else {
+    res.redirect("/login")
+  }
+});
+
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
   const user = LoggedInCheck(users, userId);
