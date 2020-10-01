@@ -18,24 +18,6 @@
 
 <body>
   <div class="background">
-    <!-- <header>
-      <div class="heading">
-        <h1>TinyApp</h1>
-        <p>Save URL's - Save Time -
-          Save
-          Characters
-
-
-          <a class="nav-item nav-link"
-            href="/urls">
-            My URLs
-          </a>
-          <a class="nav-item nav-link"
-            href="/urls/new">Create New
-            URL</a>
-        </p>
-      </div> -->
-    <!-- </header> -->
 
     <header>
       <%- include('./partials/_header'); %>
@@ -48,7 +30,11 @@
         <form action="/register"
           method="POST">
           <div class="form-item">
+            <% if(error){%>
+            <p><%=error%></p>
+            <%}%>
             <p>Create an Account</p>
+        
 
             <input type="email"
               name="email"

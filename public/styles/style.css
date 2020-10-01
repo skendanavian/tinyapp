@@ -29,6 +29,11 @@ main {
 
 }
 
+.error-text p{ 
+  font-size: 20px;
+  color: green;
+}
+
 .heading {
   position: fixed;
   padding: 10px;

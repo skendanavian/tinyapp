@@ -56,6 +56,13 @@ main {
 
 }
 
+.error-text p{
+  margin: 10rem;
+  padding: 10rem;
+  font-size: 20px;
+  color: green;
+}
+
 input {
   height: 3rem;
   width: 26rem;
@@ -78,20 +85,3 @@ input:hover {
   padding: 5px;
 }
 
-/* .btn-primary {
-
-  height: 3rem;
-  width: 7rem;
-  background: white;
-  border-radius: 0.5rem;
-  font-size: 15px;
-  border: none;
-  color: white;
-  background: #007bff;
-}
-
-.btn-primary:hover {
-  opacity: 80%;
-  cursor: pointer;
-  color: white;
-} */

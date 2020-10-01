@@ -17,8 +17,13 @@
     <%- include('./partials/_header'); %>
   </header>
   <div class="card text-center">
+    <%if(error){%>
+    <h3 style="text-align: center;">
+      <%=error%></h3>
+    <%} else {%>
     <div class="card-header"></div>
     <div class="card-body">
+
       <h5 class="card-title">TinyURL
         for: <%= longURL %></h5>
       <p class="card-text">Short URL: <a
@@ -47,6 +52,7 @@
 
 
     </div>
+    <%}%>
   </div>
   <!-- Bootstrap JS -->
   <script

@@ -29,31 +29,6 @@ const users = {
   }
 };
 
-// const generateRandomString = () => {
-//   const randomString = Math.random().toString(36).substring(2, 8);
-//   return randomString;
-// }
-
-// const validEmail = (userEmail) => {
-//   for (let userId in users) {
-//     const currentUser = users[userId]
-//     if (currentUser.email === userEmail) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
-
-// const validateUser = (users, email, password) => {
-//   for (let user in users) {
-//     const currentUser = users[user];
-//     if (currentUser.email === email && currentUser.password === password) {
-//       return currentUser;
-//     }
-//   }
-//   return null;
-// }
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -69,10 +44,13 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const userId = req.cookies['user_id']
   const user = users[userId] ? users[userId] : null;
-  const templateVars = {user, urls: urlDatabase};
+  if (user) {
+    const templateVars = {user, urls: urlDatabase, error: null};
+    res.render("urls_index", templateVars);
+  } else {
 
-
-  res.render("urls_index", templateVars);
+    res.render('urls_index', {user, urls: null, error: "Please create an account or login to access your URLs !"})
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -88,40 +66,45 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/register", (req, res) => {
   const userId = req.cookies['user_id']
-  const user = users[userId] ? users[userId] : null;
-  const templateVars = {user, urls: urlDatabase};
+  // const user = users[userId] ? users[userId] : null;
+  const templateVars = {user: users[userId], urls: urlDatabase, error: null};
   res.render('register', templateVars);
 });
 app.get("/login", (req, res) => {
   const userId = req.cookies['user_id']
   const user = users[userId] ? users[userId] : null;
-  const templateVars = {user, urls: urlDatabase};
+  const templateVars = {user, urls: urlDatabase, error: null};
   res.render('login', templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+
   const userId = req.cookies['user_id'];
   const user = users[userId] ? users[userId] : null;
-  //could check for null and throw error
   const shortURL = req.params.shortURL;
-  const templateVars = {shortURL, user: users[userId], longURL: urlDatabase[shortURL].longURL};
+  const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
+  const templateVars = {shortURL, longURL, user: users[userId], error: null};
 
-  if (templateVars.longURL) {
-    res.render("urls_show", templateVars);
-  } else {
-    res.status(404);
-    res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
+  for (let url in urlDatabase) {
+    if (url === shortURL && urlDatabase[url].longURL) {
+      return res.render("urls_show", templateVars);
+    }
   }
+  res.status(404);
+  res.render('urls_index', {user, urls: null, error: "Invalid URL: 404 Error"})
+
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  const userId = req.cookies['user_id'];
+  const user = users[userId] ? users[userId] : null;
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL].longURL;
+  const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : null;
   if (longURL) {
     res.redirect(longURL);
   } else {
     res.status(404);
-    res.send('<h1>404 Error\n</h1> <p>This address does not exist!</p>');
+    res.render('urls_index', {user, urls: null, error: "Invalid URL: 404 Error"})
   }
 });
 
@@ -131,7 +114,8 @@ app.post("/register", (req, res) => {
   const emailCheck = validEmail(users, templateVars.email);
   if (templateVars.email === "" || templateVars.password === "" || !emailCheck) {
     res.status(400);
-    res.send('<h1>Registration Failed: Please try again.\n</h1><p>400 Error\n</p>');
+    // res.send('<h1>Registration Failed: Please try again.\n</h1><p>400 Error\n</p>');
+    res.render('register', {user: null, error: "Failed Registration Attempt"})
   } else {
     users[userId] = {
       id: userId,
@@ -151,15 +135,15 @@ app.post("/login", (req, res) => {
   const emailCheck = validEmail(users, email);
   if (email === "" || password === "" || emailCheck) {
     res.status(403);
-    return res.send('<h1>Login Failed: Please try again.\n</h1><p>400 Error\n</p>');
+    res.render('login', {user: null, error: "Failed Login Attempt"})
   } else {
     const userId = validateUser(users, email, password)
     if (userId) {
       res.cookie('user_id', userId.id);
       return res.redirect('/urls');
-    }
-    res.status(403);
-    return res.send('<h1>Login Failed: Please try again.\n</h1><p>400 Error\n</p>');
+    } else
+      res.status(403);
+    res.render('login', {user: null, error: "Failed Login Attempt"})
   }
 });
 
@@ -192,9 +176,6 @@ app.post("/urls", (req, res) => {
     longURL,
     userID
   }
-  // console.log(urlDatabase)
-  // console.log(templateVars[user])
-
   res.redirect(`/urls/${shortURL}`);
 });
 
