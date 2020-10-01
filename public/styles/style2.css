@@ -65,6 +65,7 @@ input {
   border-style: none;
   border-radius: 0.5rem;
   max-width: 26rem;
+  background: lightgray;
 }
 
 input:hover {

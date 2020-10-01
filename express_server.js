@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const {response} = require('express');
 const PORT = 8080;
 const cookieParser = require('cookie-parser')
+const {generateRandomString, validEmail, validateUser} = require('./helpers')
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -28,21 +29,30 @@ const users = {
   }
 };
 
-const generateRandomString = () => {
-  const randomString = Math.random().toString(36).substring(2, 8);
-  return randomString;
-}
+// const generateRandomString = () => {
+//   const randomString = Math.random().toString(36).substring(2, 8);
+//   return randomString;
+// }
 
-const validEmail = (userEmail) => {
-  // (Object.keys(users)).forEach((e) => users[e].email !== userEmail ? true : false);
-  for (let userId in users) {
-    const currentUser = users[userId]
-    if (currentUser.email === userEmail) {
-      return false;
-    }
-  }
-  return true;
-};
+// const validEmail = (userEmail) => {
+//   for (let userId in users) {
+//     const currentUser = users[userId]
+//     if (currentUser.email === userEmail) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
+
+// const validateUser = (users, email, password) => {
+//   for (let user in users) {
+//     const currentUser = users[user];
+//     if (currentUser.email === email && currentUser.password === password) {
+//       return currentUser;
+//     }
+//   }
+//   return null;
+// }
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -90,11 +100,11 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const userId = req.cookies['user_id']
+  const userId = req.cookies['user_id'];
+  const user = users[userId] ? users[userId] : null;
+  //could check for null and throw error
   const shortURL = req.params.shortURL;
   const templateVars = {shortURL, user: users[userId], longURL: urlDatabase[shortURL].longURL};
-
-
 
   if (templateVars.longURL) {
     res.render("urls_show", templateVars);
@@ -118,7 +128,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
   templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
-  const emailCheck = validEmail(templateVars.email);
+  const emailCheck = validEmail(users, templateVars.email);
   if (templateVars.email === "" || templateVars.password === "" || !emailCheck) {
     res.status(400);
     res.send('<h1>Registration Failed: Please try again.\n</h1><p>400 Error\n</p>');
@@ -128,26 +138,17 @@ app.post("/register", (req, res) => {
       email: templateVars.email,
       password: templateVars.password
     }
-    console.log(users)
     res.cookie('user_id', userId);
     res.redirect('/urls');
   }
 });
 
-const validateUser = (users, email, password) => {
-  for (let user in users) {
-    const currentUser = users[user];
-    if (currentUser.email === email && currentUser.password === password) {
-      return currentUser;
-    }
-  }
-  return null;
-}
+
 
 app.post("/login", (req, res) => {
-  // templateVars = {id: userId, email: req.body['email'], password: req.body['password']}
   const {email, password} = req.body
-  const emailCheck = validEmail(email);
+
+  const emailCheck = validEmail(users, email);
   if (email === "" || password === "" || emailCheck) {
     res.status(403);
     return res.send('<h1>Login Failed: Please try again.\n</h1><p>400 Error\n</p>');
@@ -183,7 +184,17 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  const userID = res.cookie['user_id']
+  const longURL = req.body.longURL;
+  templateVars = {shortURL, longURL, user: userID}
+
+  urlDatabase[shortURL] = {
+    longURL,
+    userID
+  }
+  // console.log(urlDatabase)
+  // console.log(templateVars[user])
+
   res.redirect(`/urls/${shortURL}`);
 });
 
