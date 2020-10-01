@@ -41,7 +41,7 @@ const LoggedInCheck = (database, userID) => {
     return database[userID];
   }
   else {
-    return null;
+    return false;
   }
 
 }

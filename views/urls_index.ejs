@@ -27,64 +27,79 @@
     <div class="error-text">
       <%if(error){%>
       <div
-        style="margin-top: 6rem; padding: 4rem;">
-        <h2 style="text-align: center;">
+        style="margin-top: 2rem; padding: 4rem;">
+        <%if(error === 1){%>
+
+
+        <div
+          style="margin-bottom: 3rem; text-align: center;">
+          <h1 style="color: #2a882a">
+            TinyApp</h1>
+          <hr>
+        </div>
+        <h3 style="text-align: center;">
           Please <a href="/login">
             login</a> or <a
             href="/register">register</a>
           to access and create URLs!
-        </h2>
+        </h3>
+
+        <%} else {%>
+        <h2 style="text-align: center;">
+          <%=error%></h2>
+        <%}%>
       </div>
       <%} else {%>
 
-      <h3>My URLs</h3>
+        <h3>My URLs</h3>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Short URL
-            </th>
-            <th scope="col">Long URL
-            </th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Short URL
+              </th>
+              <th scope="col">Long URL
+              </th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete
+              </th>
 
-          </tr>
-        </thead>
-        <tbody>
-          <% for(let url of urls) { %>
-          <tr>
-            <td>
-              <%= url.shortURL %>
-            </td>
-            <td><%= url.longURL %>
-            </td>
-            <td>
-              <form method="GET"
-                action="/urls/<%= url.shortURL %>">
-                <button type="submit"
-                  class="btn btn-primary">Edit</button>
-              </form>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(let url of urls) { %>
+            <tr>
+              <td>
+                <%= url.shortURL %>
+              </td>
+              <td><%= url.longURL %>
+              </td>
+              <td>
+                <form method="GET"
+                  action="/urls/<%= url.shortURL %>">
+                  <button type="submit"
+                    class="btn btn-primary">Edit</button>
+                </form>
 
-            </td>
+              </td>
 
-            <td>
-              <form method="POST"
-                action="/urls/<%= url.shortURL %>/delete">
-                <button type="submit"
-                  class="btn btn-danger">Delete</button>
-              </form>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
-      <hr>
-      <h5 style="text-align: center;"><a
-          href="/urls/new">Create New
-          Link</a></h5>
-      <hr>
-      <%}%>
+              <td>
+                <form method="POST"
+                  action="/urls/<%= url.shortURL %>/delete">
+                  <button type="submit"
+                    class="btn btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <hr>
+        <h5 style="text-align: center;">
+          <a href="/urls/new">Create New
+            Link</a></h5>
+        <hr>
+        <%}%>
 
   </main>
   <!-- Bootstrap JS -->

@@ -54,8 +54,7 @@ app.get("/urls", (req, res) => {
     const templateVars = {user, urls: userUrls, error: null};
     res.render("urls_index", templateVars);
   } else {
-
-    res.render('urls_index', {user, urls: null, error: true})
+    res.render('urls_index', {user, urls: null, error: 1})
   }
 });
 
@@ -72,16 +71,25 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/register", (req, res) => {
   const userId = req.session.user_id;
-  const templateVars = {user: users[userId], urls: urlDatabase, error: null};
-  res.render('register', templateVars);
+  const user = LoggedInCheck(users, userId);
+  if (user) {
+    res.redirect('/urls');
+  } else {
+    const templateVars = {user: users[userId], urls: urlDatabase, error: null};
+    res.render('register', templateVars);
+  }
 });
 
 
 app.get("/login", (req, res) => {
   const userId = req.session.user_id;
   const user = LoggedInCheck(users, userId);
-  const templateVars = {user, urls: urlDatabase, error: null};
-  res.render('login', templateVars);
+  if (user) {
+    res.redirect('/urls');
+  } else {
+    const templateVars = {user, urls: urlDatabase, error: null};
+    res.render('login', templateVars);
+  }
 });
 
 
@@ -101,7 +109,7 @@ app.get("/urls/:shortURL", (req, res) => {
     }
   }
   res.status(404);
-  res.render('urls_index', {user, urls: null, error: "No Access to this URL: 404 Error"});
+  res.render('urls_index', {user, urls: null, error: "The requested URL is not available: 404 Error"});
 });
 
 app.get("/u/:shortURL", (req, res) => {
