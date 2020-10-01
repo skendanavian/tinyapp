@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const {response} = require('express');
 var cookieSession = require('cookie-session')
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10);
@@ -31,6 +30,7 @@ const urlDatabase = {
 const users = {
 
 };
+
 
 //GET ROUTES
 
@@ -217,7 +217,6 @@ app.post("/urls", (req, res) => {
   }
   res.redirect(`/urls/${shortURL}`);
 });
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)

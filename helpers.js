@@ -1,7 +1,11 @@
+// For ShortURL and User IDs
+
 const generateRandomString = () => {
   const randomString = Math.random().toString(36).substring(2, 8);
   return randomString;
 };
+
+//Returns an array of objects for user specific URLs
 
 const urlsForUser = (urlDatabase, id) => {
   const userUrls = [];
@@ -18,6 +22,8 @@ const urlsForUser = (urlDatabase, id) => {
   return (userUrls);
 };
 
+//Returns the user object when given their email
+
 const getUserByEmail = (email, database) => {
   for (let user in database) {
     const currentUser = database[user];
@@ -28,6 +34,8 @@ const getUserByEmail = (email, database) => {
   return undefined;
 };
 
+//Checks if the user email and password are valid for Login
+
 const validateUser = (bcrypt, user, email, password) => {
   if (user.email === email && bcrypt.compareSync(password, user['password'])) {
     return true;
@@ -35,6 +43,8 @@ const validateUser = (bcrypt, user, email, password) => {
     return false;
   }
 };
+
+//Checks if user is currently logged in for page header customization
 
 const LoggedInCheck = (database, userID) => {
   if (database[userID]) {
