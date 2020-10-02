@@ -28,8 +28,10 @@ const users = {
 
 };
 
+///////////////////////////////////////////////////////
+//    GET ROUTES
+///////////////////////////////////////////////////////
 
-//GET ROUTES
 
 app.get("/", (req, res) => {
   const userId = req.session.user_id;
@@ -123,7 +125,11 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-//POST ROUTES
+
+///////////////////////////////////////////////////////
+//  POST ROUTES
+///////////////////////////////////////////////////////
+
 
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
