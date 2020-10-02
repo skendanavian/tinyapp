@@ -8,7 +8,6 @@ const PORT = 8080;
 
 const {generateRandomString, validateUser, urlsForUser, LoggedInCheck, getUserByEmail} = require('./helpers')
 
-//npm package settings
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -49,17 +48,19 @@ app.get("/urls", (req, res) => {
   const user = LoggedInCheck(users, userId);
 
   if (user) {
+    //get all of the specific user URLs
     const userUrls = urlsForUser(urlDatabase, userId);
     const templateVars = {user, urls: userUrls, error: null};
     res.render("urls_index", templateVars);
   } else {
+    //send error '1' for ejs to render correct message on urls_index
     res.render('urls_index', {user, urls: null, error: 1})
   }
 });
 
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
-  const templateVars = {user: users[userId]}
+  const templateVars = {user: users[userId]};
 
   if (templateVars.user) {
     res.render("urls_new", templateVars);

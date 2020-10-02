@@ -21,14 +21,14 @@ describe('getUserByEmail', function() {
     const expectedOutput = 'userRandomID';
     assert.equal(expectedOutput, user.id);
   });
-  it('should return undefined when given an invalid email', function() {
+  it('should return null when given an invalid email', function() {
     const user = getUserByEmail("user5@example.com", testUsers)
-    const expectedOutput = undefined;
-    assert.equal(expectedOutput, undefined);
+    const expectedOutput = null;
+    assert.equal(expectedOutput, user);
   });
-  it('should return undefined when given an empty string', function() {
+  it('should return null when given an empty string', function() {
     const user = getUserByEmail("", testUsers)
-    const expectedOutput = undefined;
-    assert.equal(expectedOutput, undefined);
+    const expectedOutput = null;
+    assert.equal(expectedOutput, user)
   });
 });

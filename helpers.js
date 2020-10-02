@@ -31,7 +31,7 @@ const getUserByEmail = (email, database) => {
       return currentUser;
     }
   }
-  return undefined;
+  return null;
 };
 
 //Checks if the user email and password are valid for Login
